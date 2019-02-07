@@ -33,7 +33,7 @@ import co.paulburke.android.itemtouchhelperdemo.helper.SimpleItemTouchHelperCall
  */
 class RecyclerGridFragment : Fragment(), OnStartDragListener {
 
-    private var mItemTouchHelper: ItemTouchHelper? = null
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,22 +46,22 @@ class RecyclerGridFragment : Fragment(), OnStartDragListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = RecyclerListAdapter(activity!!, this)
+        val listAdapter = RecyclerListAdapter(activity!!, this)
+        val callback = SimpleItemTouchHelperCallback(listAdapter)
+        itemTouchHelper = ItemTouchHelper(callback)
 
-        val recyclerView = view as RecyclerView
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapter
-
-        val spanCount = resources.getInteger(R.integer.grid_columns)
-        val layoutManager = GridLayoutManager(activity, spanCount)
-        recyclerView.layoutManager = layoutManager
-
-        val callback = SimpleItemTouchHelperCallback(adapter)
-        mItemTouchHelper = ItemTouchHelper(callback)
-        mItemTouchHelper!!.attachToRecyclerView(recyclerView)
+        (view as RecyclerView).apply {
+            setHasFixedSize(true)
+            adapter = listAdapter
+            layoutManager = GridLayoutManager(
+                activity,
+                resources.getInteger(R.integer.grid_columns)
+            )
+            itemTouchHelper.attachToRecyclerView(this)
+        }
     }
 
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
-        mItemTouchHelper!!.startDrag(viewHolder)
+        itemTouchHelper.startDrag(viewHolder)
     }
 }

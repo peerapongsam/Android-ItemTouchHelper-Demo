@@ -33,7 +33,7 @@ import co.paulburke.android.itemtouchhelperdemo.helper.SimpleItemTouchHelperCall
  */
 class RecyclerListFragment : Fragment(), OnStartDragListener {
 
-    private var mItemTouchHelper: ItemTouchHelper? = null
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,19 +46,19 @@ class RecyclerListFragment : Fragment(), OnStartDragListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = RecyclerListAdapter(activity!!, this)
+        val listAdapter = RecyclerListAdapter(activity!!, this)
+        val callback = SimpleItemTouchHelperCallback(listAdapter)
+        itemTouchHelper = ItemTouchHelper(callback)
 
-        val recyclerView = view as RecyclerView
-        recyclerView.setHasFixedSize(true)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-
-        val callback = SimpleItemTouchHelperCallback(adapter)
-        mItemTouchHelper = ItemTouchHelper(callback)
-        mItemTouchHelper!!.attachToRecyclerView(recyclerView)
+        (view as RecyclerView).apply {
+            setHasFixedSize(true)
+            adapter = listAdapter
+            layoutManager = LinearLayoutManager(activity)
+            itemTouchHelper.attachToRecyclerView(this)
+        }
     }
 
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
-        mItemTouchHelper!!.startDrag(viewHolder)
+        itemTouchHelper.startDrag(viewHolder)
     }
 }

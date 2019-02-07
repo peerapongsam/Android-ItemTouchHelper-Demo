@@ -29,6 +29,7 @@ import android.widget.TextView
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperAdapter
 import co.paulburke.android.itemtouchhelperdemo.helper.ItemTouchHelperViewHolder
 import co.paulburke.android.itemtouchhelperdemo.helper.OnStartDragListener
+import kotlinx.android.extensions.LayoutContainer
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collections
@@ -39,13 +40,15 @@ import java.util.Collections
  *
  * @author Paul Burke (ipaulpro)
  */
-class RecyclerListAdapter(context: Context, private val mDragStartListener: OnStartDragListener) :
-    RecyclerView.Adapter<RecyclerListAdapter.ItemViewHolder>(), ItemTouchHelperAdapter {
+class RecyclerListAdapter(
+    context: Context,
+    private val dragStartListener: OnStartDragListener
+) : RecyclerView.Adapter<RecyclerListAdapter.ItemViewHolder>(), ItemTouchHelperAdapter {
 
-    private val mItems = ArrayList<String>()
+    private val items = ArrayList<String>()
 
     init {
-        mItems.addAll(Arrays.asList(*context.resources.getStringArray(R.array.dummy_items)))
+        items.addAll(Arrays.asList(*context.resources.getStringArray(R.array.dummy_items)))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -55,37 +58,40 @@ class RecyclerListAdapter(context: Context, private val mDragStartListener: OnSt
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        holder.textView.text = mItems[position]
+        holder.textView.text = items[position]
 
         // Start a drag whenever the handle view it touched
         holder.handleView.setOnTouchListener { v, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                mDragStartListener.onStartDrag(holder)
+                dragStartListener.onStartDrag(holder)
             }
             false
         }
     }
 
     override fun onItemDismiss(position: Int) {
-        mItems.removeAt(position)
+        items.removeAt(position)
         notifyItemRemoved(position)
     }
 
     override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
-        Collections.swap(mItems, fromPosition, toPosition)
+        Collections.swap(items, fromPosition, toPosition)
         notifyItemMoved(fromPosition, toPosition)
         return true
     }
 
     override fun getItemCount(): Int {
-        return mItems.size
+        return items.size
     }
 
     /**
      * Simple example of a view holder that implements [ItemTouchHelperViewHolder] and has a
      * "handle" view that initiates a drag event when touched.
      */
-    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+    class ItemViewHolder(
+        override val containerView: View
+    ) : RecyclerView.ViewHolder(containerView),
+        LayoutContainer,
         ItemTouchHelperViewHolder {
 
         val textView: TextView = itemView.findViewById<View>(R.id.text) as TextView

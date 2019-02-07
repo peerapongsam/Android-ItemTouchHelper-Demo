@@ -19,6 +19,7 @@ package co.paulburke.android.itemtouchhelperdemo
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_main.toolbar
 
 /**
  * @author Paul Burke (ipaulpro)
@@ -27,9 +28,9 @@ class MainActivity : AppCompatActivity(), MainFragment.OnListItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(R.id.toolbar))
+
+        setSupportActionBar(toolbar)
 
         if (savedInstanceState == null) {
             val fragment = MainFragment()

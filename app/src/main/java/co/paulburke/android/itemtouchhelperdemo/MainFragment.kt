@@ -28,7 +28,7 @@ import android.widget.ListView
  */
 class MainFragment : ListFragment() {
 
-    private var mItemClickListener: OnListItemClickListener? = null
+    private var itemClickListener: OnListItemClickListener? = null
 
     interface OnListItemClickListener {
         fun onListItemClick(position: Int)
@@ -37,7 +37,7 @@ class MainFragment : ListFragment() {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        mItemClickListener = context as OnListItemClickListener?
+        itemClickListener = context as OnListItemClickListener?
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -45,13 +45,13 @@ class MainFragment : ListFragment() {
 
         val items = resources.getStringArray(R.array.main_items)
         val adapter = ArrayAdapter(
-            activity!!,
+            requireContext(),
             android.R.layout.simple_list_item_1, items
         )
         listAdapter = adapter
     }
 
     override fun onListItemClick(l: ListView?, v: View?, position: Int, id: Long) {
-        mItemClickListener!!.onListItemClick(position)
+        itemClickListener!!.onListItemClick(position)
     }
 }
